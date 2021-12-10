@@ -13,6 +13,9 @@ import '../node_modules/react-modal-video/scss/modal-video.scss';
 import '../node_modules/slick-carousel/slick/slick.css';
 import '../node_modules/slick-carousel/slick/slick-theme.css';
 
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
+
 ReactDOM.render(
   <Provider store={store}>
     <ThemeProvider theme={theme}>
@@ -21,7 +24,7 @@ ReactDOM.render(
           <title>Movie Library</title>
           <meta
             name="description"
-            content="A Movie Library where you can check all your favorite movies, as well as the cast of it, and so mucnh more! Made with ❤️ by Fidalgo"
+            content="A Movie Library where you can check all your favorite movies, as well as the cast of it, and so much more! Made with ❤️ by Fidalgo"
           />
           <link rel="canonical" href="https://movies.fidalgo.dev" />
         </Helmet>

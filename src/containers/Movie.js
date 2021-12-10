@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import history from '../history';
 import LazyLoad from 'react-lazyload';
 import ModalVideo from 'react-modal-video';
+import { DateRangePicker } from 'react-date-range';
 import { Element, animateScroll as scroll } from 'react-scroll';
 
 import {
@@ -258,6 +259,11 @@ const AWrapper = styled.a`
   text-decoration: none;
 `;
 
+function handleSelect(a)
+{
+  console.log(a)
+}
+
 //Movie Component
 const Movie = ({
   location,
@@ -298,6 +304,13 @@ const Movie = ({
     return <Loader />;
   }
 
+  const selectionRange = {
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection',
+  }
+
+
   if (movie.status_code) {
     history.push(process.env.PUBLIC_URL + '/404');
   }
@@ -317,7 +330,7 @@ const Movie = ({
           <ImageWrapper style={!loaded ? { display: 'none' } : {}}>
             <MovieImg
               error={error ? 1 : 0}
-              src={`${secure_base_url}w780${movie.poster_path}`}
+              src={`${movie.poster}`}
               onLoad={() => setLoaded(true)}
               // If no image, error will occurr, we set error to true
               // And only change the src to the nothing svg if it isn't already, to avoid infinite callback
@@ -331,7 +344,7 @@ const Movie = ({
           </ImageWrapper>
           <MovieDetails>
             <HeaderWrapper>
-              <Header size="2" title={movie.title} subtitle={movie.tagline} />
+              <Header size="2" title={movie.local_title} subtitle={movie.catch_phrase} />
             </HeaderWrapper>
             <DetailsWrapper>
               <RatingsWrapper>
@@ -350,29 +363,28 @@ const Movie = ({
             <LinksWrapper>{renderGenres(movie.genres)}</LinksWrapper>
             <Heading>The Synopsis</Heading>
             <Text>
-              {movie.overview
-                ? movie.overview
+              {movie.synopsis
+                ? movie.synopsis
                 : 'There is no synopsis available...'}
             </Text>
-            <Heading>The Cast</Heading>
-            <Cast cast={movie.cast} baseUrl={secure_base_url} />
             <ButtonsWrapper>
               <LeftButtons>
-                {renderWebsite(movie.homepage)}
-                {renderImdb(movie.imdb_id)}
+                {renderCases(movie.cases)}
                 {renderTrailer(
-                  movie.videos.results,
+                  movie.trailer_video_url,
                   modalOpened,
                   setmodalOpened
                 )}
               </LeftButtons>
               {renderBack()}
             </ButtonsWrapper>
+            <DateRangePicker
+              ranges={[selectionRange]}
+              onChange={handleSelect}
+            />
           </MovieDetails>
         </MovieWrapper>
       </LazyLoad>
-      <Header title="Recommended" subtitle="movies" />
-      {renderRecommended(recommended, secure_base_url)}
     </Wrapper>
   );
 };
@@ -399,6 +411,13 @@ function renderWebsite(link) {
     </AWrapper>
   );
 }
+function renderCases(cases){
+  return (
+    <AWrapper target="_blank" href={cases[0].custom_id}>
+      <Button title="DVD" icon="link" />
+    </AWrapper>
+  );
+}
 
 // Render IMDB button
 function renderImdb(id) {
@@ -412,14 +431,20 @@ function renderImdb(id) {
   );
 }
 
+function youtube_parser(url){
+  var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+  var match = url.match(regExp);
+  return (match&&match[7].length==11)? match[7] : false;
+}
+
 // Render Trailer button. On click triggers state to open modal of trailer
 function renderTrailer(videos, modalOpened, setmodalOpened) {
-  if (videos.length === 0) {
+  if (!videos)
+  {
     return;
   }
-  const { key } = videos.find(
-    (video) => video.type === 'Trailer' && video.site === 'YouTube'
-  );
+  console.log(youtube_parser(videos))
+  const  key = youtube_parser(videos);
   return (
     <React.Fragment>
       <div onClick={() => setmodalOpened(true)}>
@@ -447,9 +472,9 @@ function splitYear(date) {
 // Render info of movie
 function renderInfo(languages, time, data) {
   const info = [];
-  if (languages.length !== 0) {
-    info.push(languages[0].name);
-  }
+  //if (languages.length !== 0) {
+  //  info.push(languages[0].name);
+  //}
   info.push(time, data);
   return info
     .filter((el) => el !== null)
@@ -481,7 +506,7 @@ function renderRecommended(recommended, base_url) {
 function renderGenres(genres) {
   return genres.map((genre) => (
     <StyledLink
-      to={`${process.env.PUBLIC_URL}/genres/${genre.name}`}
+      to={`${process.env.PUBLIC_URL}/genres/${genre.name_fr}`}
       key={genre.id}
     >
       <FontAwesomeIcon
@@ -489,7 +514,7 @@ function renderGenres(genres) {
         size="1x"
         style={{ marginRight: '5px' }}
       />
-      {genre.name}
+      {genre.name_fr}
     </StyledLink>
   ));
 }

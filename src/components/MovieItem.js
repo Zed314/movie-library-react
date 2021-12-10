@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import LazyLoad from 'react-lazyload';
 
+
 import NothingSvg from '../svg/nothing.svg';
 import Rating from '../components/Rating';
 import Loading from '../components/Loading';
@@ -149,10 +150,13 @@ const Tooltip = styled.span`
   }
 `;
 
+
 // Function to render list of movies
 const MovieItem = ({ movie, baseUrl }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+
+
 
   useEffect(() => {
     return () => setLoaded(false);
@@ -170,7 +174,7 @@ const MovieItem = ({ movie, baseUrl }) => {
           error={error ? 1 : 0}
           onLoad={() => setLoaded(true)}
           style={!loaded ? { display: 'none' } : {}}
-          src={`${baseUrl}w342${movie.poster_path}`}
+          src={`${movie.poster}`}
           // If no image, error will occurr, we set error to true
           // And only change the src to the nothing svg if it isn't already, to avoid infinite callback
           onError={e => {
@@ -181,13 +185,7 @@ const MovieItem = ({ movie, baseUrl }) => {
           }}
         />
         <DetailsWrapper>
-          <Title>{movie.title}</Title>
-          <RatingsWrapper>
-            <Rating number={movie.vote_average / 2} />
-            <Tooltip>
-              {movie.vote_average} average rating on {movie.vote_count} votes
-            </Tooltip>
-          </RatingsWrapper>
+          <Title>{movie.local_title}</Title>
         </DetailsWrapper>
       </MovieWrapper>
     </LazyLoad>
