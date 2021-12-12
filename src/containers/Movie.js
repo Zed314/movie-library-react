@@ -7,9 +7,9 @@ import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import history from '../history';
 import LazyLoad from 'react-lazyload';
-import ModalVideo from 'react-modal-video';
 import { DateRangePicker } from 'react-date-range';
 import { Element, animateScroll as scroll } from 'react-scroll';
+
 
 import {
   getMovie,
@@ -450,12 +450,6 @@ function renderTrailer(videos, modalOpened, setmodalOpened) {
       <div onClick={() => setmodalOpened(true)}>
         <Button title="Trailer" icon="play" />
       </div>
-      <ModalVideo
-        channel="youtube"
-        isOpen={modalOpened}
-        videoId={key}
-        onClose={() => setmodalOpened(false)}
-      />
     </React.Fragment>
   );
 }
